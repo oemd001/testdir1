@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+  echo "Error: Please provide two arguments: output file and input html file" >&2
+  exit 1
+fi
+
+output_file="$1"
+input_file="$2"
+
+if [ ! -f "$input_file" ]; then
+  echo "Error: Input file $input_file does not exist" >&2
+  exit 1
+fi
+
+if [ -f "$output_file" ]; then
+  echo "Warning: Overwriting existing output file $output_file" >&2
+fi
+
+grep -Eo 'href="[^"]*\.c"' "$2" | sed -E 's/^href="..(.*)"/https:\/\/courses.cs.washington.edu\/courses\/cse374\/23sp\1/' > "$1"
+
+exit 0

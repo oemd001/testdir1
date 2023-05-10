@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+  echo "Error: Please provide two arguments: output file and input file with URLs" >&2
+  exit 1
+fi
+
+output_file="$1"
+input_file="$2"
+
+if [ ! -f "$input_file" ]; then
+  echo "Error: Input file $input_file does not exist" >&2
+  exit 1
+fi
+
+if [ -f "$output_file" ]; then
+  echo "Warning: Overwriting existing output file $output_file" >&2
+fi
+
+index=1
+
+while read -r url; do
+  echo "Performing word count measurement on $url..."
+
+  page_size=$(./measurepage "$url")
+
+  if [ "$page_size" -gt 0 ]; then
+    echo "success!"
+    echo "$index $page_size" >> "$output_file"
+    index=$((index + 1))
+  else
+    echo "failed!"
+  fi
+done < "$input_file"
+
+exit 0
